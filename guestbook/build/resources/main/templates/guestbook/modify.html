@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+
+  <th:block th:fragment="content">
+
+    <h1 class="mt-4">GuestBook Modify Page</h1>
+
+    <form action="/guestbook/modify" method="post">
+
+      <!--페이지 번호-->
+      <input type="hidden" name="page" th:value="${requestDTO.page}">
+
+      <div class="form-group">
+        <label>Gno</label>
+        <input type="text" class="form-control" name="gno" th:value="${dto.gno}" readonly> <!--수정 불가-->
+      </div>
+
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" class="form-control" name="title" th:value="${dto.title}"> <!--수정 가능-->
+      </div>
+
+      <div class="form-group">
+        <label>Content</label>
+        <textarea class="form-control" name="content" rows="5">[[${dto.content}]]</textarea> <!--수정 가능-->
+      </div>
+
+      <div class="form-group">
+        <label>Writer</label>
+        <input type="text" class="form-control" name="writer" th:value="${dto.writer}" readonly> <!--수정 불가-->
+      </div>
+
+      <div class="form-group">
+        <label>RegDate</label>
+        <input type="text" class="form-control" name="regDate" th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+      </div>
+
+      <div class="form-group">
+        <label>ModDate</label>
+        <input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+      </div>
+    </form>
+    <br>
+
+    <button type="button" class="btn-outline-primary modifyBtn">Modify</button>
+    <button type="button" class="btn-outline-info listBtn">List</button>
+    <button type="button" class="btn-outline-danger removeBtn">Remove</button>
+
+    <script th:inline="javascript">
+      var actionForm = $("form"); // jQuery 선택자를 사용하여 HTML 폼 요소를 선택한다. 페이지 내 첫 번째 <form> 태그가 선택된다.
+
+      $(".removeBtn").click(function(){
+        actionForm // 폼을 동적으로 수정하여 삭제 작업을 처리할 수 있는 URL과 방식으로 전환한다.
+                // 폼의 action 속성을 /guestbook/remove로 설정(이 경로로 HTTP POST 요청을 전송)
+                .attr("action", "/guestbook/remove")
+                // 폼의 method 속성을 POST로 설정
+                .attr("method", "post");
+
+        actionForm.submit();
+
+      });
+
+      $(".modifyBtn").click(function() {
+        if(!confirm("수정하시겠습니까?")){
+          return;
+        }
+
+        actionForm
+                .attr("action", "/guestbook/modify")
+                .attr("method", "post")
+                .submit();
+      });
+
+      // 굳이 왜 필요한지 잘 모르겠음??
+      // $(".btn-list").click(function(){
+      //   var pageInfo = $("input[name='page']");
+      //
+      //   actionForm.empty();
+      //   actionForm.append(pageInfo);
+      //   actionForm
+      //           .attr("action", "/guestbook/list")
+      //           .attr("method", "get");
+      //
+      //   console.log(actionForm.html());
+      //   actionForm.submit();
+      // });
+
+    </script>
+  </th:block>
+</th:block>
